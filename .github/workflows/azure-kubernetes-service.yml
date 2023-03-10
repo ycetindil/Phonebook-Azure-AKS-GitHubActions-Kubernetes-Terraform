@@ -1,0 +1,72 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+  
+env:
+  ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
+  ARM_CLIENT_SECRET: "${{ secrets.CLIENT_SECRET }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.TENANT_ID }}"
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: |
+        cd aks-terraform
+        terraform init
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      run: |
+        cd aks-terraform
+        terraform apply -auto-approve
+
+  AKS:
+    name: 'AKS Tasks'
+    needs: terraform
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    
+    steps:
+    # AKS configuration
+    - name: AKS configuration
+      uses: Azure/aks-set-context@v1
+      with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: phonebook-aks
+          resource-group: phonebook-rg
+    
+    # Deploy to AKS
+    - name: Deploy to AKS
+      uses: Azure/k8s-deploy@v4
+      with:
+         manifests: k8s/
