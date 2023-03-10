@@ -11,19 +11,12 @@ terraform {
     storage_account_name = "ycetindil"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
-    use_msi              = true
-    subscription_id      = "453194c6-9b5a-46f8-bf6e-6b5a4133ee3a"
-    tenant_id            = "1a93b615-8d62-418a-ac28-22501cf1f978"
   }
 }
 
 provider "azurerm" {
   features {
   }
-
-  use_msi         = true
-  subscription_id = "453194c6-9b5a-46f8-bf6e-6b5a4133ee3a"
-  tenant_id       = "1a93b615-8d62-418a-ac28-22501cf1f978"
 }
 
 ######################
