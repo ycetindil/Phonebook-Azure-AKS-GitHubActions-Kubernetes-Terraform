@@ -66,7 +66,7 @@ resource "azurerm_network_security_rule" "nsg" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_kubernetes_cluster.aks.node_resource_group
-  network_security_group_name = data.azurerm_resources.NSG.resources.0.name
+  network_security_group_name = data.azurerm_resources.nsg.resources.0.name
 }
 
 #####################
