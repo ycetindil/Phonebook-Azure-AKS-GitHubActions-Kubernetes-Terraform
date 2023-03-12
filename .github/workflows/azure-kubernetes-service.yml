@@ -57,6 +57,10 @@ jobs:
         shell: bash
 
     steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
     # AKS configuration
     - name: AKS configuration
       uses: Azure/aks-set-context@v1
@@ -69,4 +73,4 @@ jobs:
     - name: Deploy to AKS
       uses: Azure/k8s-deploy@v4
       with:
-         manifests: k8s
+         manifests: k8s/
