@@ -53,6 +53,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 data "azurerm_resources" "nsg" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
   type                = "Microsoft.Network/networkSecurityGroups"
+  depends_on = [
+    azurerm_kubernetes_cluster.aks
+  ]
 }
 
 resource "azurerm_network_security_rule" "nsg" {
@@ -75,6 +78,9 @@ resource "azurerm_network_security_rule" "nsg" {
 data "azurerm_lb" "lb" {
   name                = "Kubernetes"
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
+  depends_on = [
+    azurerm_kubernetes_cluster.aks
+  ]
 }
 
 resource "azurerm_lb_probe" "hp30001" {
@@ -122,4 +128,7 @@ resource "azurerm_lb_rule" "lbrule30002" {
 data "azurerm_public_ips" "pips" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
   attachment_status   = "Attached"
+  depends_on = [
+    azurerm_kubernetes_cluster.aks
+  ]
 }
