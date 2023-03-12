@@ -8,7 +8,7 @@ permissions:
   contents: read
   id-token: write
   pull-requests: write
-  
+
 env:
   ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
   ARM_CLIENT_SECRET: "${{ secrets.CLIENT_SECRET }}"
@@ -55,7 +55,7 @@ jobs:
     defaults:
       run:
         shell: bash
-    
+
     steps:
     # AKS configuration
     - name: AKS configuration
@@ -64,9 +64,9 @@ jobs:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
           cluster-name: phonebook-aks
           resource-group: phonebook-rg
-    
+
     # Deploy to AKS
     - name: Deploy to AKS
       uses: Azure/k8s-deploy@v4
       with:
-         manifests: k8s/
+         manifests: ./k8s/
