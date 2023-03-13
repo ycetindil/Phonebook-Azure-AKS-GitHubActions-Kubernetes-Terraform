@@ -8,9 +8,9 @@ on:
         required: true
         type: choice
         options:
-        - No
-        - Yes
-        default: 'No'
+        - no
+        - yes
+        default: 'no'
 
 env:
   ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
