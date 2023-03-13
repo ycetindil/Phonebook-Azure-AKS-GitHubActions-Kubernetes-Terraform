@@ -1,0 +1,26 @@
+name: Destroy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Confirm infrastructure destruction'
+        required: true
+        default: 'no'
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Configure Terraform
+        uses: hashicorp/setup-terraform@v2
+        
+      - name: Destroy infrastructure
+        if: github.event.inputs.confirm == 'yes'
+        run: |
+          cd aks-terraform
+          terraform init
+          terraform destroy -auto-approve
