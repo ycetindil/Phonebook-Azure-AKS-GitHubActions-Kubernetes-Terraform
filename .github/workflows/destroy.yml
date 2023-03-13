@@ -6,7 +6,11 @@ on:
       confirm:
         description: 'Confirm infrastructure destruction'
         required: true
-        default: 'no'
+        type: choice
+        options:
+        - No
+        - Yes
+        default: 'No'
 
 env:
   ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
