@@ -8,9 +8,9 @@ on:
         required: true
         type: choice
         options:
-        - no
-        - yes
-        default: 'no'
+        - 'No'
+        - 'Yes'
+        default: 'No'
 
 env:
   ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
@@ -29,7 +29,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         
       - name: Destroy infrastructure
-        if: github.event.inputs.confirm == 'yes'
+        if: github.event.inputs.confirm == 'Yes'
         run: |
           cd aks-terraform
           terraform init
