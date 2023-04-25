@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.39.1"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.0"
+    }
   }
 
   backend "azurerm" {
@@ -17,6 +21,9 @@ terraform {
 provider "azurerm" {
   features {
   }
+}
+
+provider "github" {
 }
 
 ######################
@@ -47,30 +54,30 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-###########
-### NSG ###
-###########
-data "azurerm_resources" "nsg" {
-  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
-  type                = "Microsoft.Network/networkSecurityGroups"
-  depends_on = [
-    azurerm_kubernetes_cluster.aks
-  ]
-}
+# ###########
+# ### NSG ###
+# ###########
+# data "azurerm_resources" "nsg" {
+#   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
+#   type                = "Microsoft.Network/networkSecurityGroups"
+#   depends_on = [
+#     azurerm_kubernetes_cluster.aks
+#   ]
+# }
 
-resource "azurerm_network_security_rule" "nsg" {
-  name                        = "AllowNodePorts"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "30000-32767"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_kubernetes_cluster.aks.node_resource_group
-  network_security_group_name = data.azurerm_resources.nsg.resources.0.name
-}
+# resource "azurerm_network_security_rule" "nsg" {
+#   name                        = "AllowNodePorts"
+#   priority                    = 100
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "Tcp"
+#   source_port_range           = "*"
+#   destination_port_range      = "30000-32767"
+#   source_address_prefix       = "*"
+#   destination_address_prefix  = "*"
+#   resource_group_name         = azurerm_kubernetes_cluster.aks.node_resource_group
+#   network_security_group_name = data.azurerm_resources.nsg.resources.0.name
+# }
 
 #####################
 ### LOAD BALANCER ###
@@ -122,13 +129,34 @@ resource "azurerm_lb_rule" "lbrule30002" {
   disable_outbound_snat          = true
 }
 
-###################
+##################
 ### PUBLIC IPS ###
-###################
+##################
 data "azurerm_public_ips" "pips" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
   attachment_status   = "Attached"
   depends_on = [
     azurerm_kubernetes_cluster.aks
   ]
+}
+
+################################
+### GITHUB ACTIONS VARIABLES ###
+################################
+resource "github_actions_variable" "rg_name" {
+  repository       = var.github_repo
+  variable_name    = "RG_NAME"
+  value            = azurerm_resource_group.rg.name
+}
+
+resource "github_actions_variable" "aks_name" {
+  repository       = var.github_repo
+  variable_name    = "AKS_NAME"
+  value            = azurerm_kubernetes_cluster.aks.name
+}
+
+resource "github_actions_variable" "aks_node_rg_name" {
+  repository       = var.github_repo
+  variable_name    = "AKS_NODE_RG_NAME"
+  value            = azurerm_kubernetes_cluster.aks.node_resource_group
 }
