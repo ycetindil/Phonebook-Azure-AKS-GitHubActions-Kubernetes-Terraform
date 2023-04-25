@@ -19,7 +19,7 @@ Terraform also needs GitHub Token to create the variables in GitHub repository. 
 GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
 
-`az login` and `k8s deployment` uses `AZURE_CREDENTIALS` which is also defined as a repo secret.
+`az login` and `k8s deployment` use `AZURE_CREDENTIALS` which is also defined as a repo secret.
 
 ## Notes
 
