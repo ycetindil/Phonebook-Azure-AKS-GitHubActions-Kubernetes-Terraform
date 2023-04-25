@@ -25,4 +25,4 @@ GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 - Since GitHub Actions Pipeline uses an ephemeral agent we need to define a backend to keep our `terraform.tfstate`.
 - To use later in the pipeline we define multiple `github_actions_variable`s.
 - Since we have our Terraform configuration files in a dedicated folder, we need to define this path in the job environment for the steps which need to access to this folder to run. In a similar fashion we need to define `k8s` path to apply our Kubernetes manifest files.
-- Our application needs the ports `30001-30002` open to be accessed. Since the NSG name of the AKS assigned randomly by Azure we need to get its name and add a rule to it in the pipeline.
+- Our application needs the ports `30001-30002` open to be accessed. Since the NSG name of the AKS assigned randomly by Azure we assign it to a GitHub variable and add a rule to it in the pipeline.
