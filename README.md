@@ -8,9 +8,8 @@ Terraform needs Azure Credentials to create the infrastructure. We need to provi
 - ARM_TENANT_ID
 - ARM_CLIENT_ID
 - ARM_CLIENT_SECRET
-- AZURE_CREDENTIALS
 
-To get these credentials we use this command;
+To get these credentials we use this command in a terminal;
 ```
 az ad sp create-for-rbac --sdk-auth --role="Contributor" --scopes="/subscriptions/<subscription_id>"
 ```
@@ -19,6 +18,8 @@ Terraform also needs GitHub Token to create the variables in GitHub repository. 
 ```
 GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
+
+`az login` and `k8s deployment` uses `AZURE_CREDENTIALS` which is also defined as a repo secret.
 
 ## Notes
 
