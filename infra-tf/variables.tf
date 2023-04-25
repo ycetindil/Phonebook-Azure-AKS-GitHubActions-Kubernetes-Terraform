@@ -9,7 +9,3 @@ variable "location" {
 variable "github_repo" {
   default = "Phonebook-Azure-GitHubActions-Kubernetes-Terraform"
 }
-
-variable "github_token" {
-  
-}
