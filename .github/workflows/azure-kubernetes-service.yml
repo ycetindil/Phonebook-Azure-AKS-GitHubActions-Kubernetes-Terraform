@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
   pull-requests: write
 
@@ -45,8 +45,8 @@ jobs:
     - name: Terraform Apply
       working-directory: ${{ env.TF_FOLDER }}
       env:
-        TF_VAR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: terraform apply -auto-approve -var "github_token=$TF_VAR_GITHUB_TOKEN"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: terraform apply -auto-approve
 
   NSG:
     name: 'NSG Rule'
