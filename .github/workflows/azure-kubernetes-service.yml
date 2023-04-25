@@ -78,12 +78,12 @@ jobs:
     - name: AKS configuration
       uses: Azure/aks-set-context@v1
       with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: '{{ vars.AKS_NAME }}'
-        resource-group: '{{ vars.RG_NAME }}'
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        cluster-name: ${{ vars.AKS_NAME }}
+        resource-group: ${{ vars.RG_NAME }}
 
     # Deploy to AKS
     - name: Deploy to AKS
       uses: Azure/k8s-deploy@v4
       with:
-        manifests: '{{ K8S_FOLDER }}'
+        manifests: ${{ K8S_FOLDER }}
