@@ -86,4 +86,4 @@ jobs:
     - name: Deploy to AKS
       uses: Azure/k8s-deploy@v4
       with:
-        manifests: ${{ K8S_FOLDER }}
+        manifests: ${{ env.K8S_FOLDER }}
