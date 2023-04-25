@@ -45,7 +45,7 @@ jobs:
     - name: Terraform Apply
       working-directory: ${{ env.TF_FOLDER }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: terraform apply -auto-approve
 
   NSG:
