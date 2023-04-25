@@ -14,6 +14,9 @@ env:
   ARM_CLIENT_SECRET: "${{ secrets.CLIENT_SECRET }}"
   ARM_SUBSCRIPTION_ID: "${{ secrets.SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ secrets.TENANT_ID }}"
+  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  TF_FOLDER: "infra-tf"
+  K8S_FOLDER: "k8s"
 
 jobs:
   terraform:
@@ -36,25 +39,34 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: |
-        cd aks-terraform
-        terraform init
+      working-directory: ${{ env.TF_FOLDER }}
+      run: terraform init
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
+      working-directory: ${{ env.TF_FOLDER }}
+      run: terraform apply -auto-approve
+
+  NSG:
+    name: 'NSG Rule'
+    needs: terraform
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 'Login to Azure'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL }} 
+    
+    - name: 'Create NSG rule'
       run: |
-        cd aks-terraform
-        terraform apply -auto-approve
+        NSG_NAME=$(az network nsg list --resource-group ${{ vars.AKS_NODE_RG_NAME }} --query "[?contains(name, 'aks')].[name]" --output tsv)
+        az network nsg rule create --nsg-name $NSG_NAME --resource-group ${{ vars.AKS_NODE_RG_NAME }} --name open3000130002 --access Allow --priority 100 --destination-port-ranges 30001-30002
 
   AKS:
     name: 'AKS Tasks'
     needs: terraform
     runs-on: ubuntu-latest
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -65,12 +77,12 @@ jobs:
     - name: AKS configuration
       uses: Azure/aks-set-context@v1
       with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          cluster-name: phonebook-aks
-          resource-group: phonebook-rg
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: '{{ vars.AKS_NAME }}'
+        resource-group: '{{ vars.RG_NAME }}'
 
     # Deploy to AKS
     - name: Deploy to AKS
       uses: Azure/k8s-deploy@v4
       with:
-         manifests: k8s/
+        manifests: '{{ K8S_FOLDER }}'
