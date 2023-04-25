@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: Create Infrastructure and Deploy K8s
 
 on:
   push:
