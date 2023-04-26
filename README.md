@@ -1,4 +1,5 @@
-# GitHub Actions Terraform AKS Deployment and Deploying an App to AKS
+# Phonebook Application Deployed on AKS Using GitHub Actions
+
 This project sets up a CI/CD pipeline using GitHub Actions to deploy infrastructure using Terraform and deploy Phonebook Application to that infrastructure.
 
 ## Setting Credentials
